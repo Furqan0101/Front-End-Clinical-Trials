@@ -1,14 +1,13 @@
 {
   "name": "clinical-trials-frontend",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "type": "module",
   "dependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
     "axios": "^1.11.0",
     "framer-motion": "^11.18.2",
     "jwt-decode": "^4.0.0",
@@ -16,8 +15,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.30.1",
-    "vite": "^5.4.19"   
- },
+    "vite": "^5.4.19",
+    "@vitejs/plugin-react": "^4.7.0"
+  },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
