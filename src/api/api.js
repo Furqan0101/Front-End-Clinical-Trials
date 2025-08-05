@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://trialx.onrender.com/api/", // ✅ Updated to production backend
+  baseURL: import.meta.env.VITE_API_URL,  // ✅ use env variable
 });
 
 api.interceptors.request.use((config) => {
