@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/api";
+import { addTrial } from "../api/api";
 import { motion } from "framer-motion";
 
 function AddTrial() {
@@ -8,24 +8,55 @@ function AddTrial() {
   const [exclusion, setExclusion] = useState("");
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setMessage("");
+
+    // Get authentication token
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setMessage("❌ You must be logged in as an admin.");
+      return;
+    }
+
+    // Basic validation
+    if (!title || !inclusion || !exclusion || !location) {
+      setMessage("❌ Please fill in all fields.");
+      return;
+    }
+
     try {
-      const res = await api.post("/trials/", {
-        title,
+      setLoading(true);
+
+      const result = await addTrial(token, {
+        title: title,
         inclusion_criteria: inclusion,
         exclusion_criteria: exclusion,
-        location,
+        location: location,
       });
-      if (res.status === 201) {
+
+      console.log("Add trial response:", result);
+
+      // Successful response
+      if (result) {
         setMessage("✅ Trial added successfully!");
+
+        // Clear form
         setTitle("");
         setInclusion("");
         setExclusion("");
         setLocation("");
       }
     } catch (err) {
-      setMessage("❌ " + (err.response?.data?.detail || "Error adding trial."));
+      console.error("Error adding trial:", err);
+
+      setMessage("❌ Error adding trial. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,7 +71,8 @@ function AddTrial() {
         Add Trial - Admin Panel
       </h2>
 
-      <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Trial Title */}
         <input
           type="text"
           placeholder="Trial Title"
@@ -49,6 +81,7 @@ function AddTrial() {
           className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-black dark:text-white"
         />
 
+        {/* Inclusion Criteria */}
         <textarea
           placeholder="Inclusion Criteria"
           value={inclusion}
@@ -57,6 +90,7 @@ function AddTrial() {
           rows={3}
         />
 
+        {/* Exclusion Criteria */}
         <textarea
           placeholder="Exclusion Criteria"
           value={exclusion}
@@ -65,6 +99,7 @@ function AddTrial() {
           rows={3}
         />
 
+        {/* Location */}
         <input
           type="text"
           placeholder="Location"
@@ -73,17 +108,22 @@ function AddTrial() {
           className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-black dark:text-white"
         />
 
+        {/* Submit Button */}
         <button
-          onClick={handleSubmit}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition"
+          type="submit"
+          disabled={loading}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-4 py-2 rounded transition"
         >
-          Add Trial
+          {loading ? "Adding Trial..." : "Add Trial"}
         </button>
 
+        {/* Message */}
         {message && (
-          <p className="text-sm mt-4 text-center text-red-500 dark:text-red-400">{message}</p>
+          <p className="text-sm mt-4 text-center">
+            {message}
+          </p>
         )}
-      </div>
+      </form>
     </motion.div>
   );
 }
