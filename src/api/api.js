@@ -18,12 +18,39 @@ export async function registerUser(data) {
   });
   return res.json();
 }
-
 // ---------- PROFILE ----------
 export async function getProfile(token) {
   const res = await fetch(`${BASE_URL}/profile`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
+  return res.json();
+}
+
+export async function addProfile(token, profileData) {
+  const res = await fetch(`${BASE_URL}/profile`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(profileData),
+  });
+
+  return res.json();
+}
+
+export async function updateProfile(token, profileData) {
+  const res = await fetch(`${BASE_URL}/profile`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(profileData),
+  });
+
   return res.json();
 }
 
